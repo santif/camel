@@ -509,6 +509,28 @@ public class QuickfixjEngine extends ServiceSupport {
         @Override
         public void toApp(Message message, SessionID sessionID) throws DoNotSend {
             try {
+                if (message instanceof Logon) {
+                    LOG.info(">>> quickfix >>> Logon message");
+                    LOG.info(">>> quickfix >>> Setting credentials for '" + sessionID + "'");
+                    String usernameKey = "fix_" + sessionID + "_username";
+                    String passwordKey = "fix_" + sessionID + "_password";
+                    String encryptKey = "fix_" + sessionID + "_encrypt";
+                    String username = System.getProperty(usernameKey);
+                    String password = System.getProperty(passwordKey);
+                    String encryptMethod = System.getProperty(encryptKey);
+                    LOG.info(">>> quickfix >>> System property - [" + usernameKey + "]: [" + username + "]");
+                    LOG.info(">>> quickfix >>> System property - [" + passwordKey + "]: [" + password + "]");
+                    LOG.info(">>> quickfix >>> System property - [" + encryptKey + "]: [" + encryptMethod + "]");
+                    if (username != null && password != null) {
+                        message.setString(Username.FIELD, username);
+                        message.setString(Password.FIELD, password);
+                        int encryptMethodInt = encryptMethod == null ? 0 : Integer.parseInt(encryptMethod);
+                        message.setInt(EncryptMethod.FIELD, encryptMethodInt);
+                    } else {
+                        LOG.warn("Credentials not found for " + usernameKey + " - " + passwordKey + 
+                            " - SessionID: " + sessionID);
+                    }
+                }                
                 dispatch(QuickfixjEventCategory.AppMessageSent, sessionID, message);
             } catch (Exception e) {
                 throw new DispatcherException(e);
