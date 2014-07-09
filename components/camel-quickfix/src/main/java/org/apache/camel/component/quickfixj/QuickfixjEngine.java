@@ -67,6 +67,10 @@ import quickfix.SocketInitiator;
 import quickfix.ThreadedSocketAcceptor;
 import quickfix.ThreadedSocketInitiator;
 import quickfix.UnsupportedMessageType;
+import quickfix.field.EncryptMethod;
+import quickfix.field.Password;
+import quickfix.field.Username;
+import quickfix.fixt11.Logon;
 
 /**
  * This is a wrapper class that provided QuickFIX/J initialization capabilities
